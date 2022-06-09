@@ -9,7 +9,7 @@ def behav(l, bs, trials, which, ids):
     import pandas as pd
     pd.set_option('mode.chained_assignment', None)
     import numpy as np
-    w = l[(l['which'] == which) | (l['which']=='pt_com')]
+    w = l[(l['which'] == which) | (l['which']=='co')]
     w['behav'] = 'temp'
     w = w.reset_index()
     for i in range(len(w)):#.iterrows():
@@ -108,7 +108,7 @@ def perm_binom_test(com,dataset,which):
     pd.options.mode.chained_assignment = None 
     shuffles = 10000
     results = []
-    w = com[(com['which']==which) | (com['which']=='pt_com')]
+    w = com[(com['which']==which) | (com['which']=='co')]
     
     toShuff = w['ratio_burst']-w['ratio_behav']
     results.append(toShuff.mean())
@@ -198,7 +198,7 @@ def plot_beh(pt_lfp_b,pt_lfp_c,cc_lfp_b,cc_lfp_c,pt_ecog_b,pt_ecog_c,cc_ecog_b,c
     xtr.get_legend().remove()
 
     xtr = fig.add_subplot(gs[0:3, 2:6])
-    palette = {"cc": qs[0], "pt": qs[1]}
+    palette = {"cc": qs[0], "pta": qs[1]}
     kws = {"s": 60, "facecolor": "none", "linewidth": 1.5}
     xtr = sns.scatterplot(
         data=behav_lfp, x="ratio_behav", y="ratio_burst", 
@@ -284,9 +284,9 @@ def plot_beh(pt_lfp_b,pt_lfp_c,cc_lfp_b,cc_lfp_c,pt_ecog_b,pt_ecog_c,cc_ecog_b,c
     xtr.set_ylabel('S/R bursts')#, fontsize=12)
     xtr.yaxis.set_label_coords(0.925, 0.5)       
     ####################
-    ecog_u = ecog[~(ecog['which'] == 'pt_com')]
-    lfp_u = pablo[~(pablo['which'] == 'pt_com')]
-    marco_u = marco[~(marco['which'] == 'pt_com')]
+    ecog_u = ecog[~(ecog['which'] == 'co')]
+    lfp_u = pablo[~(pablo['which'] == 'co')]
+    marco_u = marco[~(marco['which'] == 'co')]
     lfp_u = lfp_u.astype({'which':object,'amp':float,'freq':float,'duration':float,'behav':object})
     ecog_u = ecog_u.astype({'which':object,'amp':float,'freq':float,'duration':float,'behav':object})
     marco_u = marco_u.astype({'which':object,'amp':float,'freq':float,'duration':float,'behav':object})

@@ -248,14 +248,14 @@ def find_burst_data(c,phase):
         b_pad[anchor-first:(anchor-first+len(b))] = b  
         if burst['which'] =='cc':
             cc.append(b_pad)
-        elif burst['which'] == 'pt':
+        elif burst['which'] == 'pta':
             pt.append(b_pad)
             
     cc = np.array(cc)
     pt = np.array(pt)
     return cc, pt
 #%%
-def find_burst_data2(c,phase):
+def find_burst_data_mean_session(c,phase):
     import numpy as np
     anchor = 1250
     locs_uniq = c['loc'].unique()
@@ -283,7 +283,7 @@ def find_burst_data2(c,phase):
             b_pad[anchor-first:(anchor-first+len(b))] = b  
             if burst['which'] =='cc':
                 cc.append(b_pad)
-            elif burst['which'] == 'pt':
+            elif burst['which'] == 'pta':
                 pt.append(b_pad)
         cc_mean = np.nanmean(np.array(cc),axis=0)
         pt_mean = np.nanmean(np.array(pt),axis=0)
@@ -322,7 +322,7 @@ def find_burst_data3(c,c1,phase):
             b_pad[anchor-first:(anchor-first+len(b))] = b  
             if burst['which'] =='cc':
                 cc.append(b_pad)
-            elif burst['which'] == 'pt':
+            elif burst['which'] == 'pta':
                 pt.append(b_pad)
         cc_mean = np.nanmean(np.array(cc),axis=0)
         pt_mean = np.nanmean(np.array(pt),axis=0)
@@ -355,7 +355,7 @@ def find_burst_data3(c,c1,phase):
             b_pad[anchor-first:(anchor-first+len(b))] = b  
             if burst['which'] =='cc':
                 cc.append(b_pad)
-            elif burst['which'] == 'pt':
+            elif burst['which'] == 'pta':
                 pt.append(b_pad)
         cc_mean = np.nanmean(np.array(cc),axis=0)
         pt_mean = np.nanmean(np.array(pt),axis=0)
