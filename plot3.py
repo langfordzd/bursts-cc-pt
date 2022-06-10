@@ -449,4 +449,94 @@ def plot_beh(pt_lfp_b,pt_lfp_c,cc_lfp_b,cc_lfp_c,pt_ecog_b,pt_ecog_c,cc_ecog_b,c
     if toSave == True:
         fig.savefig('plot3.png', format='png', dpi=1200, bbox_inches='tight')
         fig.savefig('plot3.pdf', format='pdf', dpi=1200, bbox_inches='tight')
+#%%
+def plot_freq_check(lfp,lfp_bs,lfp_trials,lfp_ids,ecog,ecog_bs,ecog_trials,ecog_ids,restrict):
+    import matplotlib.pyplot as plt
+    import matplotlib.gridspec as gridspec
+    import seaborn as sns
+    import pandas as pd 
+    
+    qs = ['#191970','#DC143C','#FF8247']
+    positions = [[0,3],[3,6],[6,9],[9,12],[12,15],[15,18]]
+    fig = plt.figure(1, figsize=(21, 21))
+    gs = gridspec.GridSpec(21, 21)
+    gs.update(wspace=0.8, hspace=0.9)
+    
+    for pos, r in zip(positions,restrict):
+        pos,r
+        lfpf = lfp[(lfp['freq']>r[0]) & (lfp['freq']<r[1]) ]
+        ecogf = ecog[(ecog['freq']>r[0]) & (ecog['freq']<r[1])]
+        pt_lfp_b, pt_lfp_c      = behav(lfpf,lfp_bs,lfp_trials,'pta', lfp_ids)
+        cc_lfp_b, cc_lfp_c      = behav(lfpf,lfp_bs,lfp_trials,'cc', lfp_ids)
+        pt_ecog_b, pt_ecog_c    = behav(ecogf,ecog_bs,ecog_trials,'pta',ecog_ids)
+        cc_ecog_b, cc_ecog_c    = behav(ecogf,ecog_bs,ecog_trials,'cc',ecog_ids)
+        lfpo = pd.concat([pt_lfp_b,cc_lfp_b])
+        lfpo['monkey'] = lfpo['loc'].astype(str).str[0]
+        ecogo = pd.concat([pt_ecog_b,cc_ecog_b])
+        behav_lfp = lfpo#[(lfpo['freq']>r[0]) & (lfpo['freq']<r[1]) ]
+        behav_ecog = ecogo#[(ecogo['freq']>r[0]) & (ecogo['freq']<r[1])]
 
+    
+    
+        xtr = fig.add_subplot(gs[0:3, pos[0]:pos[1]])
+        palette = {"cc": qs[0], "pta": qs[1]}
+        kws = {"s": 60, "facecolor": "none", "linewidth": 1.5}
+        xtr = sns.scatterplot(
+            data=behav_lfp, x="ratio_behav", y="ratio_burst", 
+            edgecolor=behav_lfp["which"].map(palette),#style='monkey',
+            **kws,
+        )
+        title = str(r[0])+'-'+str(r[1])+' Hz'
+        xtr.set_title(title)
+
+        if pos[0] == 0:
+            handles, labels = zip(*[
+                (plt.scatter([], [], ec=color, **kws), key) for key, color in palette.items()
+            ])
+            xtr.legend(handles=handles[0:], labels=['CC','PTA'], bbox_to_anchor=(0.25, 0.75),frameon=False)
+            xtr.text(0.05, 0.9, "A", fontsize=20, fontweight="bold", va="bottom", ha="left",
+              transform=xtr.transAxes)
+
+        xtr.spines['left'].set_visible(False)
+        xtr.spines['top'].set_visible(False)
+        xtr.yaxis.tick_right()
+        xtr.plot([0, 2], [0, 2], 'k-', lw=1)
+        xtr.set_xlim([0,2])
+        xtr.set_ylim([0,2])
+        xtr.set_yticks([0, 0.5, 1, 1.5, 2])
+        xtr.set_yticklabels(['0','','','','2'])
+        xtr.set_xticks([0, 0.5, 1, 1.5, 2])
+        xtr.set_xticklabels(['0','','','','2'])
+        xtr.set(ylabel='',xlabel='')
+        xtr.yaxis.set_label_position("right")
+        xtr.set_ylabel('S/R bursts')#, fontsize=12)
+        xtr.set_xlabel('S/R Trials')#, fontsize=12)
+        xtr.xaxis.set_label_coords(0.5, -0.1)   
+        xtr.yaxis.set_label_coords(0.925, 0.5)   
+    
+        
+        xtr = fig.add_subplot(gs[3:6, pos[0]:pos[1]])
+        xtr = sns.scatterplot(
+            data=behav_ecog, x="ratio_behav", y="ratio_burst", 
+            edgecolor=behav_ecog["which"].map(palette),
+            **kws,
+        )
+        if pos[0] == 0:
+            xtr.text(0.05, 0.9, "B", fontsize=20, fontweight="bold", va="bottom", ha="left",
+              transform=xtr.transAxes)
+        xtr.spines['left'].set_visible(False)
+        xtr.spines['top'].set_visible(False)
+        xtr.yaxis.tick_right()
+        xtr.plot([0, 1], [0, 1], 'k-', lw=1)
+        xtr.set_xlim([0,1])
+        xtr.set_ylim([0,1])
+        xtr.set_yticks([0, 0.5, 1, 1])
+        xtr.set_yticklabels(['0','','','1'])
+        xtr.set_xticks([0, 0.5, 1, 1])
+        xtr.set_xticklabels(['0','','','1'])
+        xtr.yaxis.set_label_position("right")
+        xtr.set_xlabel('S/R Trials')#, fontsize=12)
+        xtr.xaxis.set_label_coords(0.5, -0.1)   
+        xtr.set_ylabel('S/R bursts')#, fontsize=12)
+        xtr.yaxis.set_label_coords(0.925, 0.5)       
+        ####################
